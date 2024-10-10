@@ -13,7 +13,7 @@ const firaFont = Fira_Code({
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${firaFont.className}`}>
+      <body className={`${firaFont.className} bg-anim`}>
         <div className="container">{children}</div>
       </body>
     </html>
