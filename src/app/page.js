@@ -1,7 +1,7 @@
 "use client";
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { useState } from "react";
+import React, { useState } from "react";
 
 // API key for Gemini
 const GeminiAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_KEY);
@@ -9,6 +9,16 @@ const GeminiAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_KEY);
 export default function Page() {
   // Input change events
   const [inputValue, setInputValue] = useState("");
+
+  // FIle input events
+  const [inputFile, setInputFile] = useState("");
+
+  // Get the uploaded file
+  const getUploadedFile = (e) => {
+    const files = e.target.files;
+    setInputFile([...inputFile, files]);
+    console.log(inputFile);
+  };
 
   //Set inputValue state
   const chnageInputValue = (e) => {
@@ -25,8 +35,6 @@ export default function Page() {
       const result = await model.generateContent(inputValue);
       const response = await result.response;
       const text = await response.text();
-
-      console.log(response);
 
       // Send responses to array
       setMessages((prevMessages) => [
@@ -91,7 +99,7 @@ export default function Page() {
         }
       >
         <div className={"w-full container flex justify-center"}>
-          <div className={"w-full p-1 z-10 bg-anim rounded-full"}>
+          <div className={"w-full p-1 z-10 bg-anim rounded-full relative"}>
             <input
               className={
                 "border-2 w-full py-3 px-6 rounded-full bg-transparent text-white outline-0 "
@@ -101,6 +109,14 @@ export default function Page() {
               value={inputValue}
               onChange={chnageInputValue}
             />
+            <label
+              className={
+                "bg-white px-3 py-1 rounded-full absolute right-4 top-[25%] cursor-pointer"
+              }
+            >
+              <input type="file" hidden onChange={getUploadedFile} />
+              Upload File
+            </label>
           </div>
           <button
             onClick={GenerateResponse}
