@@ -66,7 +66,9 @@ export default function Page() {
 
   return (
     <main>
-      <h1 className={"p-5 text-white font-bold text-center text-xxl"}>
+      <h1
+        className={"p-5 text-white font-bold text-center text-xl md:text-xxl"}
+      >
         Gemini and Next JS
       </h1>
       <div className={"w-full max-h-[75dvh] rounded-md overflow-y-scroll"}>
