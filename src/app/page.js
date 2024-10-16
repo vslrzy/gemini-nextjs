@@ -75,7 +75,7 @@ export default function Page() {
                   message.sender === "user"
                     ? "bg-blue-500 text-white"
                     : "bg-gray-300 text-black"
-                } inline-block px-3 rounded-md p-3 mb-4 whitespace-pre-wrap	`}
+                } inline-block px-3 rounded-md p-3 mb-4 whitespace-pre-wrap text-xs md:text-md	`}
               >
                 {message.text}
               </pre>
@@ -87,7 +87,7 @@ export default function Page() {
           GenerateResponse(event);
         }}
         className={
-          "fixed bottom-12 mx-auto left-0 right-0 flex justify-center w-full"
+          "fixed bottom-6 md:bottom-12 mx-auto left-0 right-0 flex justify-center w-full text-xs md:text-md"
         }
       >
         <div className={"w-full container flex justify-center"}>
@@ -104,7 +104,9 @@ export default function Page() {
           </div>
           <button
             onClick={GenerateResponse}
-            className={"bg-white rounded-full pe-8 ps-16 my-1 mx-[-50px] z-1"}
+            className={
+              "bg-white rounded-full pe-5 md:pe-8 ps-16 my-1 ml-[-50px] z-1"
+            }
           >
             Generate
           </button>
