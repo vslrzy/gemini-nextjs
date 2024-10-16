@@ -12,8 +12,8 @@ module.exports = {
         foreground: "var(--foreground)",
       },
       fontSize: {
-        xxl: "40px"
-      }
+        xxl: "30px",
+      },
     },
   },
   plugins: [],
