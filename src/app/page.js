@@ -11,12 +11,12 @@ export default function Page() {
   const [inputValue, setInputValue] = useState("");
 
   // FIle input events
-  const [inputFile, setInputFile] = useState("");
+  const [inputFile, setInputFile] = useState([]);
 
   // Get the uploaded file
-  const getUploadedFile = (e) => {
-    const files = e.target.files;
-    setInputFile([...inputFile, files]);
+  const getUploadedFile = async (e) => {
+    const files = await e.target.files;
+    await setInputFile(files);
     console.log(inputFile);
   };
 
@@ -32,8 +32,13 @@ export default function Page() {
   const getResponseByPropmt = async () => {
     try {
       const model = GeminiAI.getGenerativeModel({ model: "gemini-pro" });
-      const result = await model.generateContent(inputValue);
-      const response = await result.response;
+      const prompt = await model.generateContent(inputValue);
+      // const file = {
+      //   inlineData: {
+      //     data:
+      //   }
+      // }
+      const response = await prompt.response;
       const text = await response.text();
 
       // Send responses to array
@@ -109,7 +114,7 @@ export default function Page() {
               type="text"
               placeholder={"Type something..."}
               value={inputValue}
-              onChange={chnageInputValue}
+              onInput={chnageInputValue}
             />
             <label
               className={
