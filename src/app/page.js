@@ -1,7 +1,7 @@
 "use client";
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 // API key for Gemini
 const GeminiAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_KEY);
@@ -14,11 +14,15 @@ export default function Page() {
   const [inputFile, setInputFile] = useState([]);
 
   // Get the uploaded file
-  const getUploadedFile = async (e) => {
-    const files = await e.target.files;
-    await setInputFile(files);
-    console.log(inputFile);
+  const getUploadedFile = (e) => {
+    const files = e.target.files;
+    setInputFile(files);
   };
+
+  // Testing
+  useEffect(() => {
+    console.log(inputFile["0"]);
+  }, [inputFile]);
 
   //Set inputValue state
   const chnageInputValue = (e) => {
@@ -32,12 +36,13 @@ export default function Page() {
   const getResponseByPropmt = async () => {
     try {
       const model = GeminiAI.getGenerativeModel({ model: "gemini-pro" });
-      const prompt = await model.generateContent(inputValue);
-      // const file = {
-      //   inlineData: {
-      //     data:
-      //   }
-      // }
+      const file = {
+        inlineData: {
+          data: inputFile["0"].toString("base64"),
+          mimeType: inputFile["0"].type,
+        },
+      };
+      const prompt = await model.generateContent([inputValue]);
       const response = await prompt.response;
       const text = await response.text();
 
