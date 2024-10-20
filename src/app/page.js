@@ -1,8 +1,7 @@
 "use client";
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import React, { useEffect, useState } from "react";
-import { resolve } from "styled-jsx/css";
+import React, { useState } from "react";
 
 // API key for Gemini
 const GeminiAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_KEY);
@@ -15,12 +14,15 @@ export default function Page() {
   const [inputFile, setInputFile] = useState([]);
 
   // Display uploaded image state
-  const [uploadedImage, setUploadedImage] = useState("");
+  const [uploadedImage, setUploadedImage] = useState(false);
 
   // Get the uploaded file
   const getUploadedFile = (e) => {
     const files = e.target.files;
     setInputFile(files);
+
+    const objectUrl = URL.createObjectURL(files["0"]);
+    setUploadedImage(objectUrl);
   };
 
   //Set inputValue state
@@ -57,18 +59,21 @@ export default function Page() {
   // Request AI function
   const getResponseByPropmt = async () => {
     try {
-      const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+      // const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
       const model = GeminiAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-      const fileData = await readUploadedFile(inputFile["0"]);
-      const base64File = arrayBufferToBase64(fileData);
+      const fileData =
+        inputFile["0"] && (await readUploadedFile(inputFile["0"]));
+      const base64File = fileData && arrayBufferToBase64(fileData);
 
-      const file = {
+      const file = fileData && {
         inlineData: {
           data: base64File,
           mimeType: inputFile["0"].type,
         },
       };
-      const prompt = await model.generateContent([inputValue, file]);
+      const prompt = file
+        ? await model.generateContent([inputValue, file])
+        : await model.generateContent([inputValue, file]);
       const response = await prompt.response;
       const text = await response.text();
 
@@ -89,12 +94,16 @@ export default function Page() {
     if (inputValue.length >= 1) {
       setMessages((prevMessages) => [
         ...prevMessages,
-        { sender: "user", text: inputValue },
+        { sender: "user", text: inputValue, image: uploadedImage },
       ]);
       //   Get response from ai
       getResponseByPropmt();
       //   Clear input after send
       setInputValue("");
+      // Clear uploaded image state after send
+      setUploadedImage(false);
+
+      console.log(messages);
     } else {
       alert("Type Something Please");
     }
@@ -116,6 +125,15 @@ export default function Page() {
                 message.sender === "user" ? "text-right" : "text-left"
               }`}
             >
+              {message.image && (
+                <img
+                  className={
+                    "w-full h-full max-w-[150px] max-h-[90px] rounded-md border-2 border-white ml-auto mb-2"
+                  }
+                  src={message.image}
+                  alt={"uploaded_user_image"}
+                />
+              )}
               <pre
                 className={`${
                   message.sender === "user"
@@ -136,7 +154,18 @@ export default function Page() {
           "fixed bottom-6 md:bottom-12 mx-auto left-0 right-0 flex justify-center w-full text-xs md:text-md"
         }
       >
-        <div className={"w-full container flex justify-center"}>
+        <div className={"w-full container flex justify-center relative"}>
+          {uploadedImage !== false && (
+            <div className={"absolute right-10 bottom-16"}>
+              <img
+                src={uploadedImage}
+                alt={"uploaded_image"}
+                className={
+                  "w-full h-full max-w-[150px] max-h-[90px] rounded-md border-2 border-white"
+                }
+              />
+            </div>
+          )}
           <div className={"w-full p-1 z-10 bg-anim rounded-full relative"}>
             <input
               className={
