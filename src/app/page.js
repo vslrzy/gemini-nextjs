@@ -2,6 +2,7 @@
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import React, { useEffect, useState } from "react";
+import { resolve } from "styled-jsx/css";
 
 // API key for Gemini
 const GeminiAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_KEY);
@@ -10,19 +11,17 @@ export default function Page() {
   // Input change events
   const [inputValue, setInputValue] = useState("");
 
-  // FIle input events
+  // File input events
   const [inputFile, setInputFile] = useState([]);
+
+  // Display uploaded image state
+  const [uploadedImage, setUploadedImage] = useState("");
 
   // Get the uploaded file
   const getUploadedFile = (e) => {
     const files = e.target.files;
     setInputFile(files);
   };
-
-  // Testing
-  useEffect(() => {
-    console.log(inputFile["0"]);
-  }, [inputFile]);
 
   //Set inputValue state
   const chnageInputValue = (e) => {
@@ -32,17 +31,44 @@ export default function Page() {
   // Chat messages
   const [messages, setMessages] = useState([]);
 
+  // Helper function to convert ArrayBuffer to Base64
+  const arrayBufferToBase64 = (buffer) => {
+    let binary = "";
+    const bytes = new Uint8Array(buffer);
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+  };
+
+  // Read uploaded file from input
+  const readUploadedFile = async (file) => {
+    const reader = new FileReader();
+    return new Promise((resolve, reject) => {
+      reader.onload = (event) => {
+        resolve(event.target.result);
+      };
+      reader.onerror = reject;
+      reader.readAsArrayBuffer(file);
+    });
+  };
+
   // Request AI function
   const getResponseByPropmt = async () => {
     try {
-      const model = GeminiAI.getGenerativeModel({ model: "gemini-pro" });
+      const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+      const model = GeminiAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const fileData = await readUploadedFile(inputFile["0"]);
+      const base64File = arrayBufferToBase64(fileData);
+
       const file = {
         inlineData: {
-          data: inputFile["0"].toString("base64"),
+          data: base64File,
           mimeType: inputFile["0"].type,
         },
       };
-      const prompt = await model.generateContent([inputValue]);
+      const prompt = await model.generateContent([inputValue, file]);
       const response = await prompt.response;
       const text = await response.text();
 
