@@ -182,13 +182,14 @@ export default function Page() {
               }
             >
               <input type="file" hidden onChange={getUploadedFile} />
-              Upload File
+              <span className="hidden md:inline">Upload File</span>
+              <span className="md:ml-2">&#8593;</span>
             </label>
           </div>
           <button
             onClick={GenerateResponse}
             className={
-              "bg-white rounded-full pe-5 md:pe-8 ps-16 my-1 ml-[-50px] z-1"
+              "bg-white rounded-full pr-5 md:pr-8 pl-16 my-1 ml-[-50px] z-1"
             }
           >
             Generate

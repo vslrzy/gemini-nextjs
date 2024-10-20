@@ -31,14 +31,18 @@ body {
   display: none;
 }
 
-
 .container {
-    max-width: 1300px;
-    height: auto;
-    margin: 0px auto;
-    padding: 0px 30px;
+  max-width: 1300px;
+  height: auto;
+  margin: 0px auto;
+  padding: 0px 30px;
 }
 
+@media (max-width: 768px) {
+  .container {
+    padding: 0px 15px;
+  }
+}
 
 /*Background Animation*/
 /*.bg-anim {*/
@@ -100,5 +104,5 @@ body {
 /*}*/
 
 .bg-anim {
-    background: #212121;
+  background: #212121;
 }
