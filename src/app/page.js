@@ -71,9 +71,10 @@ export default function Page() {
           mimeType: inputFile["0"].type,
         },
       };
+
       const prompt = file
         ? await model.generateContent([inputValue, file])
-        : await model.generateContent([inputValue, file]);
+        : await model.generateContent([inputValue]);
       const response = await prompt.response;
       const text = await response.text();
 
@@ -83,7 +84,7 @@ export default function Page() {
         { sender: "ai", text: text },
       ]);
     } catch (error) {
-      alert(error);
+      console.log(error);
     }
   };
 
@@ -102,8 +103,6 @@ export default function Page() {
       setInputValue("");
       // Clear uploaded image state after send
       setUploadedImage(false);
-
-      console.log(messages);
     } else {
       alert("Type Something Please");
     }
